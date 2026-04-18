@@ -5,6 +5,7 @@ from PIL import Image
 import numpy as np
 from google import genai
 from dotenv import load_dotenv
+import json
 
 load_dotenv()
 
@@ -15,20 +16,23 @@ model = RandomForestClassifier(n_estimators=100, random_state=42)
 model.fit(X, y)
 
 app = Flask(__name__)
-
+client = genai.Client()
 
 @app.route('/chat', methods=['GET', 'POST'])
 def chat():
-    answer = None
+    history = []
     if request.method == 'POST':
         prompt = request.form['prompt']
-        client = genai.Client()
-        response = client.models.generate_content(
-            model="gemini-3-flash-preview", contents=prompt
-        )
-        answer = response.text
+        history = json.loads(request.form.get("history") or "[]")
 
-    return render_template("chat.html", answer=answer)
+        history.append({"role": "user", "parts": [{"text": prompt}]})
+
+        response = client.models.generate_content(
+            model="gemini-3-flash-preview", contents=history
+        )
+        history.append({"role": "model", "parts": [{"text": response.text}]})
+
+    return render_template("chat.html", history=history, history_json=json.dumps(history))
 
 @app.route('/', methods=['GET', 'POST'])
 def hello():

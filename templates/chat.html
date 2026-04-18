@@ -7,12 +7,16 @@
 <body>
 <h1>Chatbot z genai</h1>
 <form method="post">
+    <input type="hidden" name="history" value="{{ history_json }}">
     Prompt: <input type="test" name="prompt" required><br>
     <button type="submit">Gadaj</button>
 </form>
 
-{% if answer is not none %}
-    <h3>Google: {{ answer }}</h3>
+{% if history %}
+    <h2>Rozmowa</h2>
+{% for msg in history %}
+    <p>{{ msg.role }}: {{ msg.parts[0].text }}</p>
+{% endfor %}
 {% endif %}
 
 </body>
