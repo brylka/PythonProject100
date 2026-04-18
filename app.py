@@ -3,6 +3,10 @@ from sklearn.datasets import load_digits
 from sklearn.ensemble import RandomForestClassifier
 from PIL import Image
 import numpy as np
+from google import genai
+from dotenv import load_dotenv
+
+load_dotenv()
 
 data = load_digits()
 X, y = data.data, data.target
@@ -11,6 +15,19 @@ model = RandomForestClassifier(n_estimators=100, random_state=42)
 model.fit(X, y)
 
 app = Flask(__name__)
+client = genai.Client()
+
+@app.route('/chat', methods=['GET', 'POST'])
+def chat():
+    answer = None
+    if request.method == 'POST':
+        prompt = request.form['prompt']
+        response = client.models.generate_content(
+            model="gemini-3-flash-preview", contents=prompt
+        )
+        answer = response.text
+
+    return render_template("chat.html", answer=answer)
 
 @app.route('/', methods=['GET', 'POST'])
 def hello():
