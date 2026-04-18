@@ -15,13 +15,14 @@ model = RandomForestClassifier(n_estimators=100, random_state=42)
 model.fit(X, y)
 
 app = Flask(__name__)
-client = genai.Client()
+
 
 @app.route('/chat', methods=['GET', 'POST'])
 def chat():
     answer = None
     if request.method == 'POST':
         prompt = request.form['prompt']
+        client = genai.Client()
         response = client.models.generate_content(
             model="gemini-3-flash-preview", contents=prompt
         )
