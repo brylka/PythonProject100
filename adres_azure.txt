@@ -1,0 +1,1 @@
+https://test-cicd-brylka-c8c6dda6byadgvdh.polandcentral-01.azurewebsites.net/
