@@ -20,15 +20,20 @@ def hello():
         img = Image.open(file).convert('L')
         img = img.resize((8,8))
         data = np.array(img)
-        # print(data)
         data = 16 - data / 255 * 16
-        # print(data)
         data = data.flatten().reshape(1,-1)
-        # print(data)
         digit = model.predict(data)[0]
-        # print(digit)
-
     return render_template("digits.html", digit=digit)
+
+
+@app.route('/add', methods=['GET', 'POST'])
+def add():
+    a = b = suma = None
+    if request.method == 'POST':
+        a = request.form['a']
+        b = request.form['b']
+        suma = int(a) + int(b)
+    return render_template("index.html", a=a, b=b, s=suma)
 
 
 if __name__ == '__main__':
